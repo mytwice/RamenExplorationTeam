@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>라면탐험가</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #f1f1f1;
+        }
+
+        .search-link {
+            display: inline-block;
+            margin-top: 10px;
+            margin-right: 10px;
+            padding: 10px;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .youtube-link {
+            background-color: #ff0000;
+        }
+
+        .naver-link {
+            background-color: #2db400;
+        }
+
+        .ramen-list {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .recommendation {
+            margin-top: 20px;
+        }
+
+        .highlight {
+            background-color: #ffeb3b;
+        }
+
+        .note {
+            font-size: 14px;
+            color: #555;
+            margin-top: 20px;
+        }
+
+        .submit-button {
+            margin-top: 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .submit-button a {
+            display: inline-block;
+            width: 100%;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-button a:hover {
+            background-color: #0056b3;
+        }
+
+        /* 추가된 CSS */
+        .recommend-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .recommend-button a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .recommend-button a:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>라면탐험가</h1>
+        <!-- "리스트에 있는 라면" 제거 -->
+        <div class="ramen-list">
+            <p id="ramenName"></p>
+        </div>
+        <form id="ramenForm">
+            <div class="form-group">
+                <label for="flavor">맛</label>
+                <select id="flavor">
+                    <option value="spicy">매운맛</option>
+                    <option value="salty">짭짤한 맛</option>
+                    <option value="mild">순한 맛</option>
+                    <option value="sweet">달콤한 맛</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ingredients">재료</label>
+                <select id="ingredients">
+                    <option value="seafood">해산물</option>
+                    <option value="meat">고기</option>
+                    <option value="vegetarian">채소</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="cookingTime">조리 시간</label>
+                <select id="cookingTime">
+                    <option value="instant">즉석 (3-5분)</option>
+                    <option value="long">긴 시간 (10분 이상)</option>
+                </select>
+            </div>
+            <button type="button" onclick="recommendRamen()">라면 추천받기</button>
+        </form>
+        <div id="result" class="result"></div>
+        <div class="recommend-button" id="recommendButton">
+            <!-- 링크 변경 -->
+            <a href="https://forms.gle/pJ4Sn2dpAej9XeyH9" target="_blank">이 라면이 없다면?</a>
+        </div>
+    </div>
+
+    <script>
+        // 라면 리스트
+        const ramenList = [
+        { name: "신라면", flavor: "spicy", ingredients: "meat", cookingTime: "instant", review: "매운맛의 대표주자!" },
+        { name: "진라면 순한맛", flavor: "mild", ingredients: "meat", cookingTime: "instant", review: "부드러운 맛이 일품입니다." },
+        { name: "오징어짬뽕", flavor: "spicy", ingredients: "seafood", cookingTime: "instant", review: "해산물의 풍미가 살아있습니다." },
+        { name: "안성탕면", flavor: "salty", ingredients: "meat", cookingTime: "instant", review: "담백하고 짭짤한 맛입니다." },
+        { name: "불닭볶음면", flavor: "spicy", ingredients: "meat", cookingTime: "instant", review: "극강의 매운맛을 즐기세요!" },
+        { name: "너구리", flavor: "salty", ingredients: "seafood", cookingTime: "long", review: "탱글한 면발과 국물이 일품입니다." },
+        { name: "삼양라면", flavor: "salty", ingredients: "meat", cookingTime: "instant", review: "전통의 짭짤한 맛을 느껴보세요." },
+        { name: "비빔면", flavor: "sweet", ingredients: "vegetarian", cookingTime: "instant", review: "달콤한 소스와 쫄깃한 면발이 조화로운 비빔면입니다." },
+        { name: "짜파게티", flavor: "sweet", ingredients: "meat", cookingTime: "instant", review: "달콤한 짜장 소스가 일품인 짜파게티입니다." },
+        { name: "팔도비빔면", flavor: "sweet", ingredients: "vegetarian", cookingTime: "instant", review: "고소한 비빔 소스와 쫄깃한 면발이 일품인 팔도비빔면입니다." },
+        { name: "육개장 사발면", flavor: "spicy", ingredients: "meat", cookingTime: "instant", review: "진한 육개장 국물이 일품인 사발면입니다." },
+        { name: "새우탕면", flavor: "spicy", ingredients: "seafood", cookingTime: "instant", review: "신선한 새우와 매콤한 스프가 어우러진 새우탕면입니다." },
+        { name: "진짬뽕", flavor: "spicy", ingredients: "seafood", cookingTime: "instant", review: "고추 기름에 볶아낸 해물과 면의 조화로운 맛입니다." },
+        { name: "열라면", flavor: "spicy", ingredients: "meat", cookingTime: "instant", review: "강렬한 매운맛이 일품인 열라면입니다." },
+        { name: "참깨라면", flavor: "salty", ingredients: "vegetarian", cookingTime: "instant", review: "고소한 참깨의 풍미가 일품인 참깨라면입니다." },
+        { name: "왕뚜껑", flavor: "spicy", ingredients: "meat", cookingTime: "instant", review: "푸짐한 양의 고기와 면이 일품인 왕뚜껑입니다." },
+        { name: "꽃게탕면", flavor: "spicy", ingredients: "seafood", cookingTime: "instant", review: "진한 꽃게 육수와 쫄깃한 면의 조합이 일품입니다." },
+        { name: "생면식감", flavor: "mild", ingredients: "vegetarian", cookingTime: "instant", review: "신선한 면의 식감이 일품입니다." },
+        { name: "자연은 맛있다", flavor: "mild", ingredients: "vegetarian", cookingTime: "instant", review: "자연의 향과 맛을 담은 건강한 라면입니다." },
+        { name: "나가사키 짬뽕", flavor: "spicy", ingredients: "seafood", cookingTime: "instant", review: "나가사키 스타일의 고소한 짬뽕 스프와 신선한 해산물이 일품입니다." },
+        { name: "리얼치즈라면", flavor: "salty", ingredients: "vegetarian", cookingTime: "instant", review: "진한 치즈의 풍미와 부드러운 면의 조화가 일품인 리얼치즈라면입니다." }
+        ];
+
+        // 현재 인덱스
+        let currentIndex = 0;
+
+        // 라면 추천 함수
+        function recommendRamen() {
+            const flavor = document.getElementById('flavor').value;
+            const ingredients = document.getElementById('ingredients').value;
+            const cookingTime = document.getElementById('cookingTime').value;
+
+            const filteredRamen = ramenList.filter(ramen =>
+                ramen.flavor === flavor &&
+                ramen.ingredients === ingredients &&
+                ramen.cookingTime === cookingTime
+            );
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = "";
+
+            if (filteredRamen.length > 0) {
+            resultDiv.innerHTML = "<h2>추천 라면:</h2><ul>" +
+                filteredRamen.map(ramen => `
+                    <li>
+                        ${ramen.name}: ${ramen.review}<br>
+                        <div>
+                            <a class="search-link youtube-link" href="https://www.youtube.com/results?search_query=${encodeURIComponent(ramen.name)}" target="_blank">유튜브에서 검색</a>
+                            <a class="search-link naver-link" href="https://search.naver.com/search.naver?query=${encodeURIComponent(ramen.name)}" target="_blank">네이버에서 검색</a>
+                        </div>
+                    </li>`).join('') +
+                "</ul>";
+        } else {
+            resultDiv.innerHTML = "<h2>추천 라면:</h2><p>조건에 맞는 라면이 없습니다.</p>";
+        }
+        }
+
+        // 라면 리스트 자동 변경 함수
+        function nextRamen() {
+            const ramen = ramenList[currentIndex];
+            let flavorKorean;
+            switch (ramen.flavor) {
+                case 'spicy':
+                    flavorKorean = '매운맛';
+                    break;
+                case 'salty':
+                    flavorKorean = '짭짤한 맛';
+                    break;
+                case 'mild':
+                    flavorKorean = '순한 맛';
+                    break;
+                case 'sweet':
+                    flavorKorean = '달콤한 맛';
+                    break;
+                default:
+                    flavorKorean = ramen.flavor;
+            }
+
+            let ingredientsKorean;
+            switch (ramen.ingredients) {
+                case 'seafood':
+                    ingredientsKorean = '해산물';
+                    break;
+                case 'meat':
+                    ingredientsKorean = '고기';
+                    break;
+                case 'vegetarian':
+                    ingredientsKorean = '채소';
+                    break;
+                default:
+                    ingredientsKorean = ramen.ingredients;
+            }
+
+            let cookingTimeKorean;
+            switch (ramen.cookingTime) {
+                case 'instant':
+                    cookingTimeKorean = '즉석 (3-5분)';
+                    break;
+                case 'long':
+                    cookingTimeKorean = '긴 시간 (10분 이상)';
+                    break;
+                default:
+                    cookingTimeKorean = ramen.cookingTime;
+            }
+
+            document.getElementById('ramenName').innerText = `${ramen.name}: ${ramen.review}\n#${flavorKorean} #${ingredientsKorean} #${cookingTimeKorean}`;
+            currentIndex = (currentIndex + 1) % ramenList.length; // 다음 라면 인덱스로 업데이트
+            return false; // 페이지 이동 방지
+        }
+
+
+
+        // 초기 라면 표시
+        nextRamen();
+
+        // 15초마다 라면 변경
+        setInterval(nextRamen, 15000);
+    </script>
+</body>
+</html>
